@@ -11,10 +11,12 @@ export default function RiskAnalysisPage({ token }) {
       const withScores = await Promise.all(
         items.map(async (patient) => {
           const predictions = await apiRequest(`/api/predictions/${patient.id}`, {}, token)
-          const latest = Array.isArray(predictions) && predictions.length > 0 ? predictions[0] : null
+          const latestReadmission = Array.isArray(predictions)
+            ? predictions.find((prediction) => prediction.target_type === 'readmission')
+            : null
           return {
-            patient: patient.full_name,
-            risk: latest ? Number(latest.risk_score.toFixed(2)) : 0,
+            patient: patient.masked_identifier,
+            risk: latestReadmission ? Number(latestReadmission.risk_score.toFixed(2)) : 0,
           }
         }),
       )
@@ -26,7 +28,7 @@ export default function RiskAnalysisPage({ token }) {
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold">Risk Analysis</h1>
       <div className="rounded-xl bg-white p-4 shadow">
-        <h2 className="mb-4 text-lg font-medium">Patient Risk Chart</h2>
+        <h2 className="mb-4 text-lg font-medium">Patient Readmission Risk</h2>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={patients}>

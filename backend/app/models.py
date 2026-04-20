@@ -24,16 +24,21 @@ class Patient(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     full_name: Mapped[str] = mapped_column(String(120))
+    masked_identifier: Mapped[str] = mapped_column(String(32), unique=True, index=True)
     age: Mapped[int] = mapped_column(Integer)
     bmi: Mapped[float] = mapped_column(Float)
     blood_pressure: Mapped[float] = mapped_column(Float)
     cholesterol: Mapped[float] = mapped_column(Float)
     glucose: Mapped[float] = mapped_column(Float)
     smoker: Mapped[bool] = mapped_column(Boolean, default=False)
+    has_historical_outcome: Mapped[bool] = mapped_column(Boolean, default=False)
+    review_status: Mapped[str] = mapped_column(String(32), default="new")
+    assigned_reviewer: Mapped[str | None] = mapped_column(String(64), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
     predictions: Mapped[list["Prediction"]] = relationship(back_populates="patient", cascade="all, delete-orphan")
     explanations: Mapped[list["Explanation"]] = relationship(back_populates="patient", cascade="all, delete-orphan")
+    observations: Mapped[list["Observation"]] = relationship(back_populates="patient", cascade="all, delete-orphan")
 
 
 class Prediction(Base):
@@ -41,9 +46,14 @@ class Prediction(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"), index=True)
+    target_type: Mapped[str] = mapped_column(String(32), default="readmission", index=True)
     risk_score: Mapped[float] = mapped_column(Float)
+    baseline_risk_score: Mapped[float] = mapped_column(Float, default=0.0)
+    confidence_score: Mapped[float] = mapped_column(Float, default=0.5)
     risk_category: Mapped[str] = mapped_column(String(32))
-    model_version: Mapped[str] = mapped_column(String(32), default="xgb-v1")
+    threshold_used: Mapped[float] = mapped_column(Float, default=0.6)
+    reason_codes: Mapped[str] = mapped_column(Text, default="[]")
+    model_version: Mapped[str] = mapped_column(String(32), default="tiered-v1")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
     patient: Mapped[Patient] = relationship(back_populates="predictions")
@@ -55,7 +65,58 @@ class Explanation(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"), index=True)
     prediction_id: Mapped[int] = mapped_column(ForeignKey("predictions.id"), index=True)
+    target_type: Mapped[str] = mapped_column(String(32), default="readmission", index=True)
     top_factors: Mapped[str] = mapped_column(Text)
+    risk_factors: Mapped[str] = mapped_column(Text, default="[]")
+    protective_factors: Mapped[str] = mapped_column(Text, default="[]")
+    plain_summary: Mapped[str] = mapped_column(Text, default="")
+    rationale_summary: Mapped[str] = mapped_column(Text, default="")
+    provenance: Mapped[str] = mapped_column(String(64), default="tiered-risk-engine-v1")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
 
     patient: Mapped[Patient] = relationship(back_populates="explanations")
+
+
+class Observation(Base):
+    __tablename__ = "observations"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"), index=True)
+    observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now, index=True)
+    heart_rate: Mapped[float | None] = mapped_column(Float, nullable=True)
+    systolic_bp: Mapped[float | None] = mapped_column(Float, nullable=True)
+    diastolic_bp: Mapped[float | None] = mapped_column(Float, nullable=True)
+    oxygen_saturation: Mapped[float | None] = mapped_column(Float, nullable=True)
+    creatinine: Mapped[float | None] = mapped_column(Float, nullable=True)
+    glucose: Mapped[float | None] = mapped_column(Float, nullable=True)
+    missingness_flags: Mapped[str] = mapped_column(Text, default="[]")
+    source: Mapped[str] = mapped_column(String(32), default="ehr")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+    patient: Mapped[Patient] = relationship(back_populates="observations")
+
+
+class ModelCard(Base):
+    __tablename__ = "model_cards"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    model_name: Mapped[str] = mapped_column(String(64))
+    model_version: Mapped[str] = mapped_column(String(32), index=True)
+    target_type: Mapped[str] = mapped_column(String(32), index=True)
+    summary: Mapped[str] = mapped_column(Text)
+    intended_use: Mapped[str] = mapped_column(Text)
+    limitations: Mapped[str] = mapped_column(Text)
+    threshold_config: Mapped[str] = mapped_column(Text, default="{}")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)
+
+
+class AuditLog(Base):
+    __tablename__ = "audit_logs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    action: Mapped[str] = mapped_column(String(64), index=True)
+    resource_type: Mapped[str] = mapped_column(String(64), index=True)
+    resource_id: Mapped[str] = mapped_column(String(64), index=True)
+    details: Mapped[str] = mapped_column(Text, default="{}")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)

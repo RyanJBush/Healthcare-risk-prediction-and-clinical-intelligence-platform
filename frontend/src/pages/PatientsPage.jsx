@@ -11,6 +11,7 @@ const blankPatient = {
   cholesterol: 180,
   glucose: 100,
   smoker: false,
+  has_historical_outcome: false,
 }
 
 export default function PatientsPage({ token }) {
@@ -74,6 +75,14 @@ export default function PatientsPage({ token }) {
             />
             Smoker
           </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={formData.has_historical_outcome}
+              onChange={(event) => setFormData({ ...formData, has_historical_outcome: event.target.checked })}
+            />
+            Historical Outcome Label Present
+          </label>
           <button type="submit" className="rounded bg-slate-900 px-3 py-2 text-white hover:bg-slate-700">
             Save Patient
           </button>
@@ -86,7 +95,7 @@ export default function PatientsPage({ token }) {
               <li key={patient.id} className="rounded border border-slate-200 p-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">{patient.full_name}</p>
+                    <p className="font-medium">{patient.masked_identifier}</p>
                     <p className="text-sm text-slate-500">
                       Age {patient.age}, BMI {patient.bmi}, BP {patient.blood_pressure}
                     </p>

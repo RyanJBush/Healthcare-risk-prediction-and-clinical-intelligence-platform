@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage'
 import PatientDetailPage from './pages/PatientDetailPage'
 import PatientsPage from './pages/PatientsPage'
 import RiskAnalysisPage from './pages/RiskAnalysisPage'
+import TriagePage from './pages/TriagePage'
 
 function ProtectedRoute({ token, children, onLogout }) {
   if (!token) {
@@ -42,6 +43,14 @@ export default function App() {
           element={
             <ProtectedRoute token={token} onLogout={actions.logout}>
               <DashboardPage token={token} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/triage"
+          element={
+            <ProtectedRoute token={token} onLogout={actions.logout}>
+              <TriagePage token={token} />
             </ProtectedRoute>
           }
         />

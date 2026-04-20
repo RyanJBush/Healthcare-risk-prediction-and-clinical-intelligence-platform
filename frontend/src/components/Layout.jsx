@@ -15,6 +15,9 @@ export default function Layout({ children, onLogout }) {
             <NavLink to="/dashboard" className={linkClass}>
               Dashboard
             </NavLink>
+            <NavLink to="/triage" className={linkClass}>
+              Triage
+            </NavLink>
             <NavLink to="/patients" className={linkClass}>
               Patients
             </NavLink>
