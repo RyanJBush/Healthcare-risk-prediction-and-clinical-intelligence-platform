@@ -280,8 +280,14 @@ def test_triage_cohort_and_metrics_branch_paths() -> None:
         )
         assert filtered.status_code == 200
         filtered_ids = {item["patient_id"] for item in filtered.json()}
-        assert not (
-            {no_prediction_patient_id, medium_risk_patient_id, low_risk_patient_id, high_risk_patient_id} & filtered_ids
+        assert all(
+            patient_id not in filtered_ids
+            for patient_id in (
+                no_prediction_patient_id,
+                medium_risk_patient_id,
+                low_risk_patient_id,
+                high_risk_patient_id,
+            )
         )
 
         clear_non_readmission_predictions()
