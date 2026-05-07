@@ -59,7 +59,7 @@ def build_feature_vector(patient: Patient) -> dict[str, float]:
     condition_obesity = 1.0 if bmi >= 30 else 0.0
     condition_hyperglycemia = 1.0 if glucose >= 126 else 0.0
     condition_hyperlipidemia = 1.0 if cholesterol >= 240 else 0.0
-    review_escalation_signal = float(_REVIEW_SIGNAL.get(patient.review_status or "new", 0.1))
+    review_escalation_signal = float(_REVIEW_SIGNAL.get(patient.review_status or "new", _REVIEW_SIGNAL["new"]))
 
     condition_count = condition_hypertension + condition_obesity + condition_hyperglycemia + condition_hyperlipidemia
     condition_burden_index = round(_clamp(condition_count / 4.0), 4)

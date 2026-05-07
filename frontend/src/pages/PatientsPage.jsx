@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { apiRequest } from '../api'
@@ -48,13 +48,20 @@ export default function PatientsPage({ token }) {
     loadPatients()
   }, [loadPatients])
 
-  const riskByPatientId = new Map(cohortRows.map((row) => [row.patient_id, row]))
-  const displayPatients = patients.filter((patient) => {
-    if (!highRiskOnly) return true
-    return riskByPatientId.get(patient.id)?.risk_category === 'high'
-  })
-  const avgRisk = cohortRows.length ? cohortRows.reduce((sum, row) => sum + row.risk_score, 0) / cohortRows.length : 0
-  const highRiskCount = cohortRows.filter((row) => row.risk_category === 'high').length
+  const riskByPatientId = useMemo(() => new Map(cohortRows.map((row) => [row.patient_id, row])), [cohortRows])
+  const displayPatients = useMemo(
+    () =>
+      patients.filter((patient) => {
+        if (!highRiskOnly) return true
+        return riskByPatientId.get(patient.id)?.risk_category === 'high'
+      }),
+    [patients, highRiskOnly, riskByPatientId],
+  )
+  const avgRisk = useMemo(
+    () => (cohortRows.length ? cohortRows.reduce((sum, row) => sum + row.risk_score, 0) / cohortRows.length : 0),
+    [cohortRows],
+  )
+  const highRiskCount = useMemo(() => cohortRows.filter((row) => row.risk_category === 'high').length, [cohortRows])
 
   async function handleSubmit(event) {
     event.preventDefault()

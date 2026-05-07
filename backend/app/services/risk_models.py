@@ -80,7 +80,7 @@ def _feature_importance_map(model: object) -> dict[str, float]:
     return {feature: 0.0 for feature in FEATURE_COLUMNS}
 
 
-def _top_contributors(importance: dict[str, float], patient: Patient, limit: int = 4) -> list[dict[str, float | str]]:
+def _top_contributing_features(importance: dict[str, float], patient: Patient, limit: int = 4) -> list[dict[str, float | str]]:
     values = build_feature_vector(patient)
     ranked = sorted(
         (
@@ -145,7 +145,7 @@ def compare_patient_risk_models(
     for model_name, model in _build_models():
         model.fit(x_train, y_train)
         score = float(model.predict_proba(x_target)[0][1])
-        contributors = _top_contributors(_feature_importance_map(model), patient)
+        contributors = _top_contributing_features(_feature_importance_map(model), patient)
         predictions.append(
             ModelRiskPrediction(
                 model_name=model_name,
