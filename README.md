@@ -7,7 +7,11 @@
 ![SHAP](https://img.shields.io/badge/SHAP-Explainability-blueviolet?style=flat)
 ![CI](https://github.com/RyanJBush/Healthcare-risk-prediction-and-clinical-intelligence-platform/actions/workflows/ci.yml/badge.svg)
 
-# Nova AI
+# Cerberus
+
+**Healthcare Risk Prediction & Clinical Intelligence Platform**
+
+[**🔗 View Live Preview →**](https://www.perplexity.ai/computer/a/cerberus-preview-project-6-of-lCA5DWRgQoa4AN6VYPXAUQ)
 
 > A production-style clinical intelligence platform that scores patient risk with explainable ML, surfaces tiered triage queues, and provides clinicians with SHAP-backed explanations — built to reflect how real healthcare AI tools must balance predictive accuracy with interpretability.
 
@@ -15,7 +19,7 @@
 
 ## 🎯 What I Built & Why
 
-Healthcare AI has a trust problem: a model that says “high risk” without explaining why is unusable in a clinical setting. I built Nova AI to tackle that directly:
+Healthcare AI has a trust problem: a model that says “high risk” without explaining why is unusable in a clinical setting. I built Cerberus to tackle that directly:
 
 - **Tiered ML scoring** — patients are scored through a pipeline that runs fast heuristic checks first and escalates to a full ML model only when needed, balancing latency with accuracy
 - **SHAP explainability** — every risk score is accompanied by a per-feature contribution breakdown that clinicians can read and act on
