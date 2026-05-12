@@ -1,6 +1,6 @@
 .RECIPEPREFIX := >
 
-.PHONY: doctor setup dev lint test backend-test frontend-build demo-bootstrap
+.PHONY: doctor setup dev lint test backend-test frontend-build demo-bootstrap demo-train-small demo-fairness demo-predict
 
 doctor:
 >python -c "import sys; assert sys.version_info >= (3, 11), f'Python 3.11+ required, found {sys.version.split()[0]}'; print('Python check: OK')"
@@ -29,3 +29,13 @@ frontend-build:
 
 demo-bootstrap:
 >./scripts/bootstrap_demo.sh
+
+
+demo-train-small:
+>./scripts/demo_train_small.sh
+
+demo-fairness:
+>python ./scripts/fairness_eval.py --n 200 --seed 42
+
+demo-predict:
+>python ./scripts/predict_cli.py --age 72 --bmi 31 --bp 158 --chol 245 --glucose 180 --smoker 1
