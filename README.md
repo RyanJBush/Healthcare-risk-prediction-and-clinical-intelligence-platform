@@ -1,37 +1,46 @@
-# Cerberus — Healthcare Risk Prediction and Clinical Intelligence Platform
+# Cerberus — Synthetic Healthcare Risk Prediction Portfolio
 
-Portfolio demo for synthetic healthcare risk scoring, interpretability, and clinical-style workflow design.
+> ⚠️ **Disclaimer:** Cerberus uses **synthetic data only** and contains **no PHI**. It is a student portfolio demo and is **not for clinical use**.
 
-⚠️ **Not for clinical use.** All data used in this project is fully synthetic and contains no real patient health information (PHI). This is a portfolio demo and has not been clinically validated.
-
-Cerberus is a recruiter-facing project that demonstrates how I design and ship a full-stack ML application with practical safeguards and transparent limitations. The focus is on clear risk workflows, explainable outputs, and honest documentation rather than clinical claims.
+Cerberus is an educational ML + software engineering project that simulates a healthcare-inspired risk workflow. The project demonstrates end-to-end pipeline design, interpretable model outputs, and transparent limitations in a responsible portfolio format.
 
 I am a **University of Maryland student studying Information Science and Electrical Engineering with a Business minor.**
 
-## What this project demonstrates
+## Project goal (high level)
 
-- Builds a full-stack ML app with FastAPI, React, and PostgreSQL.
-- Implements tiered risk scoring: heuristic first, then model escalation for uncertain cases.
-- Returns SHAP-style feature attribution and plain-language reason codes for each prediction.
-- Tracks model versions and training runs for traceability.
-- Adds role-based access control (RBAC) and audit logging patterns.
-- Includes fairness-slice and drift-monitoring demos on synthetic data.
+Cerberus estimates general risk categories (for example, readmission-style or deterioration-style targets) from synthetic patient-like features. The objective is to demonstrate:
+
+- feature engineering for tabular ML,
+- baseline model training and comparison,
+- explainability outputs (top contributing factors), and
+- full-stack product thinking around review workflows.
+
+This is an educational approximation of a risk-scoring pipeline, not a diagnostic or treatment tool.
+
+## What this demonstrates
+
+- Full-stack architecture: FastAPI backend + React frontend + SQL persistence.
+- Tiered scoring pattern: quick heuristic path and model-based path.
+- Explainability outputs with SHAP-style top factors and reason codes.
+- Training run tracking and model-version registry concepts.
+- Fairness-slice and drift-monitoring style analysis on synthetic cohorts.
+- Role-aware workflows (RBAC, audit-style logs) in a demo environment.
 
 ## Tech stack
 
 - **Backend:** Python, FastAPI, SQLAlchemy, JWT auth
 - **ML:** scikit-learn (LogisticRegression, RandomForestClassifier), SHAP
 - **Frontend:** React, Vite, Tailwind CSS, Recharts
-- **Data:** PostgreSQL or SQLite (local)
-- **Tooling:** Docker Compose, Makefile, pytest, ruff, mypy, GitHub Actions
+- **Data:** PostgreSQL (Docker) or SQLite (local tests)
+- **Developer tooling:** Makefile, Docker Compose, pytest, ruff, mypy
 
-## Architecture overview
+## Architecture
 
-High-level architecture and flow diagrams are documented in [`docs/architecture.md`](docs/architecture.md).
+See [`docs/architecture.md`](docs/architecture.md) for architecture notes.
 
-Risk pipeline: **Data → Feature Engineering → Model → Risk Score Output**
+Pipeline summary: **Features → Model → Risk Score**
 
-## How to run locally
+## Local run instructions
 
 ```bash
 git clone https://github.com/RyanJBush/Healthcare-risk-prediction-and-clinical-intelligence-platform.git
@@ -41,41 +50,58 @@ make dev
 ```
 
 Then open:
-- Frontend: `http://localhost:5173`
+- UI: `http://localhost:5173`
 - API docs: `http://localhost:8000/docs`
 
-Optional demo bootstrap:
+## Synthetic data + model commands
+
+Use these commands for a quick local demo loop:
 
 ```bash
+# Seed synthetic records and run batch scoring
 make demo-bootstrap
+
+# Run a small offline fairness slice on synthetic data
+make demo-fairness
+
+# Trigger a small training run via API (defaults: readmission, 20 seeded rows)
+make demo-train-small
+```
+
+You can also score one synthetic profile directly:
+
+```bash
+make demo-predict
 ```
 
 ## Demo workflow
 
-1. Start the stack with `make dev`.
-2. Seed synthetic records with `make demo-bootstrap`.
-3. Log in as `clinician / clinician123` and review dashboard + patient detail.
-4. Open risk analysis and triage pages to inspect score behavior.
-5. Run `python scripts/fairness_eval.py --n 500 --seed 42` for fairness slices.
+1. Start services with `make dev`.
+2. Seed synthetic cohort with `make demo-bootstrap`.
+3. Optionally run `make demo-train-small` to create a small training run.
+4. Sign in (`clinician / clinician123`) and review Dashboard, Triage, and Patient Detail.
+5. Open Risk Analysis to compare model behavior and thresholds.
 
-## Screenshots / demo
+Detailed walkthrough: [`docs/demo-runbook.md`](docs/demo-runbook.md)
 
-These artifacts are **Portfolio Preview / UI Preview** materials from a local environment and synthetic data only. They are **not for clinical use** and are not evidence of diagnosis capability, treatment recommendations, HIPAA compliance, or medical-device readiness.
+## Screenshots and portfolio materials
 
-- Screenshot inventory and capture status: [`docs/screenshots/README.md`](docs/screenshots/README.md)
-- Standalone portfolio preview page: [`docs/preview/index.html`](docs/preview/index.html)
+- Screenshot inventory + capture checklist: [`docs/screenshots/README.md`](docs/screenshots/README.md)
+- Standalone portfolio page: [`docs/preview/index.html`](docs/preview/index.html)
+
+All preview artifacts are from local, synthetic demo flows and are **not for clinical use**.
 
 ## Limitations and future work
 
-- Data is fully synthetic and does not represent real clinical populations.
-- Model outputs are illustrative demo-scale results and not clinically validated.
-- Local demo environment only; no public deployment is claimed.
-- Future work: stronger calibration workflows, richer synthetic cohort generation, and deeper monitoring visualizations.
+- Synthetic records are simplified and do not reflect real populations.
+- Metrics are demonstration-only and not clinically validated.
+- No real-world deployment claims are made.
+- Future work: calibration diagnostics, stronger synthetic cohort generation, and expanded monitoring UX.
 
 ## Resume bullets
 
-Project-specific resume bullets: [`docs/resume-bullets.md`](docs/resume-bullets.md)
+Resume-ready project bullets: [`docs/resume-bullets.md`](docs/resume-bullets.md)
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+MIT License: [`LICENSE`](LICENSE)
